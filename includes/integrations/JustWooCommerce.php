@@ -55,8 +55,8 @@ if (!class_exists('JustWooCommerce')) {
 				"CreatedAt" => $product->get_date_created()->date("Y-m-d h:i:s.u"),
 				"UpdatedAt" => $product->get_date_modified()->date("Y-m-d h:i:s.u"),
 				"ReviewsCount" => $product->get_review_count(),
-				"ReviewsRatingSum" => $product->get_average_rating(),
-				"Variations" => $variations,
+				"ReviewsRatingSum" => floatval($product->get_average_rating()),
+				"Variants" => $variations,
 			);
 		}
 
@@ -123,7 +123,7 @@ if (!class_exists('JustWooCommerce')) {
 			$return = [];
 			if ($product->get_type() === "variable") {
 				foreach ($product->get_variation_attributes() as $key => $attribute) {
-					$return[] = str_replace("Variation ", "", $key);
+					$return[] = str_replace("pa_", "", str_replace("Variation ", "", $key));
 				}
 			}
 			return $return;
@@ -139,12 +139,12 @@ if (!class_exists('JustWooCommerce')) {
 			if ($product->get_type() === "variable") {
 				foreach ($product->get_available_variations() as $key => $variation) {
 					$options = [];
-					foreach ($product->get_variation_attributes() as $keyAttr => $attribute) {
-						$options[] = $attribute[$key];
+					foreach ($variation['attributes'] as $keyAttr => $attribute) {
+						$options[] = $attribute;
 					}
 					$isVariationEnabled = $variation["variation_is_active"] == true && $variation["variation_is_visible"] == true;
 					$return[] = [
-						"ID" => (string) isset($variation["variation_id"]) ? $variation["variation_id"] : null,
+						"ID" => (string) (isset($variation["variation_id"]) ? $variation["variation_id"] : null),
 						"Title" => null,
 						"SKU" => isset($variation["sku"]) ? $variation["sku"] : null,
 						"MSRP" => isset($variation["display_regular_price"]) ? floatval($variation["display_regular_price"]) : null,
@@ -152,7 +152,7 @@ if (!class_exists('JustWooCommerce')) {
 						"Option2" => isset($options[1]) ? $options[1] : null,
 						"Option3" => isset($options[2]) ? $options[2] : null,
 						"SalePrice" => isset($variation["display_price"]) ? $variation["display_price"] : null,
-						"InventoryQuantity" => $isEnabled && $isVariationEnabled ? (isset($variation["max_qty"]) ? $variation["max_qty"] : null) : -9999,
+						"InventoryQuantity" => $isEnabled && $isVariationEnabled ? (isset($variation["max_qty"]) && $variation["max_qty"] != null ? $variation["max_qty"] : 9999) : -9999,
 					];
 				}
 			} else {
@@ -174,7 +174,7 @@ if (!class_exists('JustWooCommerce')) {
 					"Option1" => null,
 					"Option2" => null,
 					"Option3" => null,
-					"InventoryQuantity" => $isEnabled ? ($product->get_max_purchase_quantity() === -1 ? null : $product->get_max_purchase_quantity()) : -9999,
+					"InventoryQuantity" => $isEnabled ? ($product->get_max_purchase_quantity() === -1 ? 9999 : $product->get_max_purchase_quantity()) : -9999,
 				];
 			}
 			return $return;
@@ -248,16 +248,69 @@ if (!class_exists('JustWooCommerce')) {
 		public function get_items($items)
 		{
 			$return = [];
-			foreach ($items as $item) {
+			foreach ($items as $item) {								
 				$return[] = [
-					"ProductID" => (string) $item->get_product()->get_id(),
+					"ProductID" => (string) $item->get_product_id(),
 					"OrderID" => (string) $item->get_order_id(),
-					"VariantID" => (string) $item->get_variation_id(),
+					"VariantID" => (string) ($item->get_variation_id() > 0 ? $item->get_variation_id() : $item->get_product_id()),
 					"Price" => floatval($item->get_total()),
 					"TotalDiscount" => floatval($item->get_total() - $item->get_subtotal()),
 				];
 			}
 			return $return;
+		}
+		
+		public function getConversionTrackingCodes() 
+		{
+			$code = '';
+			if (is_home()) {
+				$code .= 'juapp("local","pageType","home");';
+			} else if(is_product_category()) {
+				$code .= 'juapp("local","pageType","category");';
+			} else if(is_product()) {
+				global $post;
+				$code .= 'juapp("local","pageType","product");';
+				$code .= 'juapp("local","prodId","' . $post->ID . '");';
+			} else if(is_cart()) {
+				$code .= 'juapp("local","pageType","cart");';
+			} else if(is_checkout()) {				
+				$code .= 'juapp("local","pageType","checkout");';
+			}
+			
+			if(is_user_logged_in()) {
+				$current_user = wp_get_current_user();
+				$code .= 'juapp("local","custId","' . $current_user->user_email . '");';
+			}
+			
+			global $wp;
+			$order_id  = absint( $wp->query_vars['order-received'] );
+			if ($order_id > 0 ) {
+				$order = wc_get_order( $order_id );
+				$code .= '
+juapp("order", "'. $order->get_id() .'", {
+	total:' . floatval($order->get_total()) . ',
+	subtotal:' . floatval($order->get_subtotal()) . ',
+	tax:' . floatval($order->get_total_tax()) . ',
+	shipping:' . floatval($order->get_shipping_total()) . ',
+	currency: "' . $order->get_currency() . '"
+});';
+				foreach($order->get_items() as $item) {
+					$tmpCode = '';
+					foreach($item->get_formatted_meta_data() as $meta) {
+						$tmpCode .= str_replace("pa_", "", $meta->key) . ':"' . $meta->value . '",';
+					}
+					$code .= 'juapp("orderItem", {
+	productid:' . $item->get_product_id() . ',
+	variationid:' . ($item->get_variation_id() > 0 ? $item->get_variation_id() : $item->get_product_id()) . ',
+	sku:"' . $item->get_product()->get_sku() . '",
+	name:"' . $item->get_name() . '",
+	quantity:'. floatval($item->get_quantity()) . ',
+	'. $tmpCode .'
+	price:' . floatval($item->get_total()) . '
+});';
+				}				
+			}			
+			return $code;
 		}
 	}
 }

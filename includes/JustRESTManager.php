@@ -63,6 +63,13 @@ if (!class_exists('JustRESTManager')) {
 			echo json_encode(['message' => 'No Ecommerce plugin such as WooCommerce is active.']);
 			exit;
 		}
+		
+		public function getConversionTrackingCodes() 
+		{
+			if (class_exists('woocommerce')) {
+				return $this->JustWooService->getConversionTrackingCodes();
+			}
+		}
 
 		public function array_filter_recursive($input)
 		{
