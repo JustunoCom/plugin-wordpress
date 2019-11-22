@@ -13,22 +13,24 @@ The most powerful free conversion marketing app in the market! Justuno is used b
 
 = WHAT IS JUSTUNO? =
  
-The most powerful free conversion marketing app in the market! Justuno is used by over 50,000 businesses around the world. The platform is trusted by e-commerce startups, industry experts, enterprise retailers, full service agencies, professional designers, and career marketers for all conversion marketing needs. 
+Justuno is an AI-powered on-site visitor conversion platform that utilizes billions of user data points to provide intelligent lead captures, personalized website messaging, and actionable insights that help turn website clicks into conversions.
+Leveraging advanced visitor intelligence data, the Justuno conversion optimization suite utilizes predictive analytics that can be leveraged to personalize every step of your customers’ journey.
 
-= HOW JUSTUNO HELPS YOU =
+= A FULL FEATURED CONVERSION SUITE =
 
-* **Email Pop Ups** - The simplest and most effective way to build your email list and generate sales opportunities. Use a theme or take complete control of your design!
-* **Exit Pop Ups** - Add exit intent pop ups to your site to capture emails before your visitor leaves.
-* **Mobile Optimized Pop Ups (SEO Friendly)** - Engage and convert mobile traffic with mobile-specific pop ups. In compliance with Google’s recent mobile SEO policies. 
-* **Cart and Checkout Abandonment Offers** - Prevent cart abandonment with targeted offers proven to convert shoppers into customers.
-* **Banners, Bars and Slide-Ins** - use for email capture, sale notifications and effective website messaging.
-* **Contests** - Run enticing contests to convert high-intent traffic into leads.
-* **Form Integrations** - Add the emails you capture to any list from MailChimp, Bronto, Klaviyo, Hubspot, Constant Contact, Rejoiner and more. Plus, add any HTML form to your pop ups, banners, and slide-ins. 
-* **Conversion Focused Themes** - Full screen, countdown timer, spin-to-win, age verification, holiday specific, mobile, social media, and many more! No need for single use apps when you have access to every theme you’ll ever need! 
+* **Pop-Ups** - The simplest and most effective way to build your email list, increase conversions, generate sales opportunities, and more. Use a pre-built theme or take complete control of your design!
+* **Intelligent Segmentation and Targeting** - Justuno's proprietary visitor intelligence technology analyzes billions of data points to create profiles that identify, track, and analyze every website visitor. Target these audiences with refined promotions that capture and convert leads faster than ever before.
+* **Content Gating, Age Verification, and GDPR** - Easily gate valuable content using Justuno promotions, verify age of your website visitors, and stay compliant through GDPR notifications.
+* **Mobile Optimized Pop Ups (SEO Friendly)** - Engage and convert more mobile traffic with mobile-optimized promotions that stay in compliance with current mobile SEO best practices.
+* **Banners, Bars and Slide-Ins** - Quickly add or change elements on your website for news, email capture, sale notifications, and other dynamic messaging.
+* **Exit Offers** - Add exit pop-ups to your site that captures valuable traffic before visitors leave.
+* **AI E-commerce Offers​** - Prevent cart abandonment, increase AOV, engage repeat visitors, and more with AI-powered offers proven to convert window-shoppers into profitable customers.
+* **Advanced Analytics​** - Combining the power of your audience’s onsite micro-interactions with insights gathered from billions of additional user sessions, Justuno organizes and analyzes your data to present in-depth and straightforward reporting and analytics.
+* **Direct Integrations​** - Feed your Justuno data into MailChimp, Bronto, Klaviyo, Hubspot, Constant Contact, Rejoiner, Zapier and more. Justuno integrates directly with over 95+ marketing tools.
+* **Custom Code and API Access** - Don't see something you're looking for? Add custom HTML/CSS/JS to your promotions, banners, and slide-ins, and use our custom embed options to integrate with your favorite tools.
+* **Themes by Conversion Experts​** - Quickly leverage Justuno’s extensive library of proven themes. Full screen takeovers, countdown timers, spin-to-wins, banners, age verification gates, holiday promos, mobile promos, social integrated promos, and much more are available with just a few clicks.
 
 = THE JUSTUNO SUITE COMES WITH = 
-
-* **Versatile Targeting and Segmentation** - Target visitors based on exit, page views, referral site, time on site, visit frequency, geo-location, device type, scroll, cart value, order history, local date & time, previous engagement activity, and much more! 
 
 * **Drag-and-Drop Design Canvas** - Bring your pop up and promotion designs to life with the most customizable design canvas in the app store. Start with a theme and make it your own or design from scratch. 
 
@@ -36,7 +38,7 @@ The most powerful free conversion marketing app in the market! Justuno is used b
 
 * **Single use and bulk coupon codes** - Upload bulk and single-use coupon codes. Add coupon codes to pop ups, banners, slide-ins, and follow up emails. 
 
-* **Email Auto-responses for newly acquired leads** - In addition to providing visitors with an incentive on-site, you can reach new leads with a relevant marketing message, coupon code, or content download immediately after they opt in. No 3rd party app required! 
+* **Email Auto-responses for newly acquired leads** - In addition to providing visitors with an incentive on-site, you can reach new leads with a relevant marketing message, coupon code, or content download immediately after they opt in. No 3rd party app required!
 
 * **Real Time Dashboard and Analytics** - Receive a real-time snapshot of your conversion marketing success and overall website performance. Measure the impact of your marketing campaigns, identify optimization opportunities and implement campaigns backed by data.
 
@@ -66,3 +68,8 @@ Then activate the plugin through the 'Plugins' menu in WordPress. You will need 
 = 1.3 =
 * Tested for 4.8
 * Updated Feature Suite
+
+= 2.0 =
+* Automation Scripts Added
+* Support for WooCommerce product and Order data
+* Data Synchronization

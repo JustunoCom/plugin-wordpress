@@ -18,7 +18,7 @@ if (!class_exists('JustWooCommerce')) {
 			];
 
 			if($date !== null) {
-				$args['date_modified'] = '>=' . $date;
+				$args['date_modified'] = '>=' . strtotime($date);
 			}
 
 			$products = array();
@@ -193,14 +193,14 @@ if (!class_exists('JustWooCommerce')) {
 			];
 
 			if($date !== null) {
-				$args['date_modified'] = '>=' . $date;
+				$args['date_modified'] = '>=' . strtotime($date);
 			}
 
 			$orders = [];
-			foreach (wc_get_orders($args) as $orders) {
-				$products[] = $this->mapOrderData($orders);
+			foreach (wc_get_orders($args) as $order) {
+				$orders[] = $this->mapOrderData($order);
 			}
-			return $products;
+			return $orders;
 		}
 
 		public function mapOrderData($order)
