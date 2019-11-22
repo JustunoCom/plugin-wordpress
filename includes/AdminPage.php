@@ -55,7 +55,7 @@ if (!function_exists('justuno_display_options')) {
 
 		add_settings_field(
             'justuno_api_key',
-            'Justuno API Key',
+            'Justuno Account Number',
             'justuno_api_key_field',
             'justuno_base_settings',
             'justuno_api_key',

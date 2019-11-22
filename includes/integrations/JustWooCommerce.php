@@ -55,7 +55,7 @@ if (!class_exists('JustWooCommerce')) {
 				"CreatedAt" => $product->get_date_created()->date("Y-m-d h:i:s.u"),
 				"UpdatedAt" => $product->get_date_modified()->date("Y-m-d h:i:s.u"),
 				"ReviewsCount" => $product->get_review_count(),
-				"ReviewsRatingSum" => floatval($product->get_average_rating()),
+				"ReviewsRatingAvg" => floatval($product->get_average_rating()),
 				"Variants" => $variations,
 			);
 		}
