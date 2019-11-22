@@ -92,7 +92,7 @@ if (!class_exists('JustWooCommerce')) {
 			foreach ($terms as $term) {
 				$thumb_id = get_term_meta($term->term_id, 'thumbnail_id', true);
 				$categories[] = array(
-					"ID" => $term->term_id,
+					"ID" => (string) $term->term_id,
 					"Name" => $term->name,
 					"Description" => $term->description,
 					"URL" => get_term_link($term->term_id),
@@ -309,7 +309,37 @@ juapp("order", "'. $order->get_id() .'", {
 	price:' . floatval($item->get_total()) . '
 });';
 				}				
-			}			
+			}		
+			
+			$cart = \WC()->cart;
+			$totals = $cart->get_totals();
+ 			$code .= 'juapp("cart", {
+	total:' . $totals['total'] . ',
+	subtotal:' . $totals['subtotal'] . ',
+	tax:' . $totals['total_tax'] . ',
+	shipping:'. $totals['shipping_total'] .',
+	currency:"USD",
+	}
+);';
+			$cartItems = $cart->get_cart_contents();
+			if(count($cartItems) > 0) {
+				$code .= "juapp('cartItems', [";
+				foreach($cart->get_cart() as $key => $item) {
+					$cartItem = $cart->get_cart_item($key);
+					$attrs = '';
+					if($cartItem['variation_id'] > 0) {
+						foreach($cartItem['variation'] as $key => $value) {
+							$attrs .= str_replace('attribute_', '', str_replace('pa_', '', $key)) . ": '{$value}', ";
+						}
+					}
+					$variationId = $cartItem['variation_id'] > 0 ? $cartItem['variation_id'] : $cartItem['product_id'];
+					$product = $cartItem['data'];
+					$code .= "
+{ productid: '{$cartItem['product_id']}', variationid: '{$variationId}', sku:'{$product->get_sku()}', quantity: {$cartItem['quantity']}, price: {$cartItem['line_subtotal']}, {$attrs}name: '{$product->get_name()}'},";
+				}
+				$code = substr($code, 0, -1);
+				$code .= "])";
+			}
 			return $code;
 		}
 	}
