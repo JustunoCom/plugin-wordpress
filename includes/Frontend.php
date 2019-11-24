@@ -22,9 +22,9 @@ if (!function_exists('justuno_place_script')) {
     {
         $data = esc_attr(get_option('justuno_api_key', ''));
         $objRESTManager = new Integrations\JustRESTManager();
-		$code = $objRESTManager->getConversionTrackingCodes();
+        $code = $objRESTManager->getConversionTrackingCodes();
         if ($data !== '' && $data !== null) {
-			global $post;
+            global $post;
             echo '<script data-cfasync="false">window.ju_num="' . $data . '";window.asset_host=\'//cdn.justuno.com/\';(function(i,s,o,g,r,a,m){i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)};a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,\'script\',asset_host+\'vck-wp.js\',\'juapp\');' . $code . '</script>';
         }
     }
