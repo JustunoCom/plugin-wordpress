@@ -42,7 +42,7 @@ if (!class_exists('JustRESTManager')) {
                 header("HTTP/1.1 401 Unauthorized");
                 echo json_encode(['message' => 'Invalid token.']);
                 exit;
-            } catch (\Error $e) {
+            } catch (\Exception | \Error $e) {
                 if ($_GET['debug'] == true) {
                     print_r($e);exit;
                 }
