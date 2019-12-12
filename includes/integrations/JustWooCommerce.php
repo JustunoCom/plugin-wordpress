@@ -198,7 +198,9 @@ if (!class_exists('JustWooCommerce')) {
 
             $orders = [];
             foreach (wc_get_orders($args) as $order) {
-                $orders[] = $this->mapOrderData($order);
+                if ($order instanceof \WC_Order) {
+                    $orders[] = $this->mapOrderData($order);
+                }
             }
             return $orders;
         }
