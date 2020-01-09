@@ -29,6 +29,12 @@ if (!class_exists('JustRESTManager')) {
                 $data = [];
                 $isVerifiedToken = $this->verifyWooCommerceToken($_SERVER);
                 if ($isVerifiedToken === true) {
+                    if ($request['type'] === 'verbose') {
+                        $this->getVerboseData($request);
+                        http_response_code(200);
+                        exit;
+                    }
+
                     if ($request['type'] === 'order') {
                         $data = $this->getOrderData($request);
                     } else {
@@ -48,6 +54,13 @@ if (!class_exists('JustRESTManager')) {
                 }
             }
 
+        }
+
+        public function getVerboseData($data)
+        {
+            if (class_exists('woocommerce')) {
+                return $this->JustWooService->getVerboseData($data);
+            }
         }
 
         public function getProductData($data)

@@ -4,11 +4,91 @@ namespace Integrations;
 if (!class_exists('JustWooCommerce')) {
     class JustWooCommerce
     {
+        public function getVerboseData($data)
+        {
+            $date = isset($data['date']) ? $data['date'] : null;
+            $limit = isset($data['limit']) ? $data['limit'] : 20;
+            $page = isset($data['page']) ? $data['page'] : 1;
+            $thumbSize = isset($data['thumb']) ? $data['thumb'] : 'medium';
+            $args = [
+
+                'limit' => $limit,
+                'page' => $page,
+                'orderby' => 'modified',
+                'order' => 'DESC',
+            ];
+
+            if ($date !== null) {
+                $args['date_modified'] = '>=' . strtotime($date);
+            }
+
+            $p = wc_get_products($args);
+            if ($this->has_verbose('product')) {
+                print_r($p);
+            }
+            foreach ($p as $product) {
+                $photos = $product->get_gallery_image_ids();
+                if ($this->has_verbose('imageIds')) {
+                    print_r($photos);
+                }
+                foreach ($photos as $photo) {
+                    if ($this->has_verbose('fullphoto')) {
+                        print_r(wp_get_attachment_image_url($photo));
+                    }
+                }
+
+                $categories = get_the_terms($product->get_id(), 'product_cat');
+                if ($this->has_verbose('category')) {
+                    print_r($terms);
+                }
+                foreach ($categories as $category) {
+                    $thumb_id = get_term_meta($category->term_id, 'thumbnail_id', true);
+                    if ($this->has_verbose('category')) {
+                        print_r($thumb_id);
+                    }
+                }
+
+                $terms = get_the_terms($product->get_id(), 'product_tag');
+                if ($this->has_verbose('tags')) {
+                    print_r($terms);
+                }
+
+                if ($this->has_verbose('attributes')) {
+                    print_r($product->get_variation_attributes());
+                }
+
+                if ($this->has_verbose('variations')) {
+                    print_r($product->get_available_variations());
+                }
+
+                if ($this->has_verbose('variations')) {
+                    print_r($product->get_attributes());
+                }
+
+            }
+
+            $orders = wc_get_orders($args);
+
+            if ($this->has_verbose('orders')) {
+                print_r($orders);
+            }
+
+            foreach ($orders as $order) {
+                if ($this->has_verbose('orders')) {
+                    print_r($order->get_items());
+                }
+            }
+
+            global $_wp_additional_image_sizes;
+            print_r($_wp_additional_image_sizes);
+        }
+
         public function getProductData($data)
         {
             $date = isset($data['date']) ? $data['date'] : null;
             $limit = isset($data['limit']) ? $data['limit'] : 20;
             $page = isset($data['page']) ? $data['page'] : 1;
+            $thumbSize = isset($data['thumb']) ? $data['thumb'] : 'medium';
             $args = [
 
                 'limit' => $limit,
@@ -23,15 +103,19 @@ if (!class_exists('JustWooCommerce')) {
 
             $products = array();
             foreach (wc_get_products($args) as $product) {
-                $products[] = $this->mapProductData($product);
+                $products[] = $this->mapProductData($product, $thumbSize);
             }
             return $products;
 
         }
 
-        public function mapProductData($product)
+        public function mapProductData($product, $thumbSize)
         {
-            $photos = $this->pickPhotos($product->get_gallery_image_ids());
+            $photos = $product->get_gallery_image_ids();
+            if (count($photos) === 0) {
+                $photos[] = get_post_thumbnail_id($product->get_id());
+            }
+            $photos = $this->pickPhotos($photos, $thumbSize);
             $options = $this->pickOptions($product);
             $variations = [];
             $variations = $this->pickVariations($product);
@@ -73,11 +157,11 @@ if (!class_exists('JustWooCommerce')) {
             ];
         }
 
-        private function pickPhotos($photos)
+        private function pickPhotos($photos, $thumbSize)
         {
             $return = [];
             foreach ($photos as $photo) {
-                $photo = wp_get_attachment_image_url($photo, 'medium');
+                $photo = wp_get_attachment_image_url($photo, $thumbSize);
                 if ($photo !== "") {
                     $return[] = $photo;
                 }
@@ -343,6 +427,14 @@ juapp("order", "' . $order->get_id() . '", {
                 $code .= "])";
             }
             return $code;
+        }
+
+        public function has_verbose($type)
+        {
+            if (isset($_GET['level']) && ($_GET['level'] === '*' || strpos($_GET['level'], $type) !== false)) {
+                return true;
+            }
+            return false;
         }
     }
 }
