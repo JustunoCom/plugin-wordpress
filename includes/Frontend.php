@@ -4,7 +4,6 @@ require_once dirname(__FILE__) . '/JustRESTManager.php';
 
 add_action('init', function () {
     add_rewrite_endpoint('justuno', EP_PERMALINK);
-    add_rewrite_endpoint('app', EP_ALL);
 });
 
 add_action('template_redirect', function () {
@@ -13,10 +12,6 @@ add_action('template_redirect', function () {
         header('Content-type: application/json');
         $objRESTManager = new Integrations\JustRESTManager();
         $objRESTManager->entertainCall();
-        die;
-    } else if ($wp_query->query_vars['pagename'] === "service-worker") {
-        header('Content-type: application/javascript');
-        echo file_get_contents(__DIR__ . '/js/service-worker.js');
         die;
     }
 });
