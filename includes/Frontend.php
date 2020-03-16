@@ -14,7 +14,7 @@ add_action('template_redirect', function () {
         $objRESTManager = new Integrations\JustRESTManager();
         $objRESTManager->entertainCall();
         die;
-    } else if ($wp_query->query_vars['pagename'] === "justuno-app-script") {
+    } else if ($wp_query->query_vars['pagename'] === "service-worker") {
         header('Content-type: application/javascript');
         echo file_get_contents(__DIR__ . '/js/service-worker.js');
         die;
@@ -31,7 +31,7 @@ if (!function_exists('justuno_place_script')) {
         if ($data !== '' && $data !== null) {
             global $post;
             $mainUrl = strpos($_SERVER['HTTP_USER_AGENT'], 'Firefox') !== false ? 'cdn.jst.ai' : 'cdn.justuno.com';
-            echo '<script data-cfasync="false">window.ju_num="' . $data . '";window.asset_host=\'//' . $mainUrl . '/\';(function(i,s,o,g,r,a,m){i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)};a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,\'script\',asset_host+\'vck-wp.js\',\'juapp\');' . $code . '</script>';
+            echo '<script data-cfasync="false">window.ju_num="' . $data . '";window.asset_host=\'//' . $mainUrl . '/\';(function(i,s,o,g,r,a,m){i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)};a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,\'script\',asset_host+\'vck-wp.js\',\'juapp\');' . $code . ';window.juPlatform=\'wordpress\';</script>';
         }
     }
 }
