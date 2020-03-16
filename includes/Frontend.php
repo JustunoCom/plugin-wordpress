@@ -4,6 +4,7 @@ require_once dirname(__FILE__) . '/JustRESTManager.php';
 
 add_action('init', function () {
     add_rewrite_endpoint('justuno', EP_PERMALINK);
+    add_rewrite_endpoint('app', EP_ALL);
 });
 
 add_action('template_redirect', function () {
@@ -12,6 +13,10 @@ add_action('template_redirect', function () {
         header('Content-type: application/json');
         $objRESTManager = new Integrations\JustRESTManager();
         $objRESTManager->entertainCall();
+        die;
+    } else if ($wp_query->query_vars['pagename'] === "justuno-app-script") {
+        header('Content-type: application/javascript');
+        echo file_get_contents(__DIR__ . '/js/service-worker.js');
         die;
     }
 });
@@ -25,7 +30,8 @@ if (!function_exists('justuno_place_script')) {
         $code = $objRESTManager->getConversionTrackingCodes();
         if ($data !== '' && $data !== null) {
             global $post;
-            echo '<script data-cfasync="false">window.ju_num="' . $data . '";window.asset_host=\'//cdn.justuno.com/\';(function(i,s,o,g,r,a,m){i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)};a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,\'script\',asset_host+\'vck-wp.js\',\'juapp\');' . $code . '</script>';
+            $mainUrl = strpos($_SERVER['HTTP_USER_AGENT'], 'Firefox') !== false ? 'cdn.jst.ai' : 'cdn.justuno.com';
+            echo '<script data-cfasync="false">window.ju_num="' . $data . '";window.asset_host=\'//' . $mainUrl . '/\';(function(i,s,o,g,r,a,m){i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)};a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,\'script\',asset_host+\'vck-wp.js\',\'juapp\');' . $code . '</script>';
         }
     }
 }

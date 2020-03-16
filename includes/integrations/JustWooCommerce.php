@@ -114,6 +114,16 @@ if (!class_exists('JustWooCommerce')) {
             $photos = $product->get_gallery_image_ids();
             if (count($photos) === 0) {
                 $photos[] = get_post_thumbnail_id($product->get_id());
+            } else {
+                $id = get_post_thumbnail_id();
+                if ($id != '') {
+                    foreach ($photos as $key => $photo) {
+                        if ($id === $photo) {
+                            unset($photo[$key]);
+                        }
+                    }
+                    array_unshift($photos, get_post_thumbnail_id($product->get_id()));
+                }
             }
             $photos = $this->pickPhotos($photos, $thumbSize);
             $options = $this->pickOptions($product);
