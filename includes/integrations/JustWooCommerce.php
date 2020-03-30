@@ -115,7 +115,7 @@ if (!class_exists('JustWooCommerce')) {
             if (count($photos) === 0) {
                 $photos[] = get_post_thumbnail_id($product->get_id());
             } else {
-                $id = get_post_thumbnail_id();
+                $id = get_post_thumbnail_id($product->get_id());
                 if ($id != '') {
                     foreach ($photos as $key => $photo) {
                         if ($id === $photo) {

@@ -24,36 +24,41 @@ if (!class_exists('JustRESTManager')) {
 
         public function entertainCall()
         {
-            try {
-                $request = $_GET;
-                $data = [];
-                $isVerifiedToken = $this->verifyWooCommerceToken($_SERVER);
-                if ($isVerifiedToken === true) {
-                    if ($request['type'] === 'verbose') {
-                        $this->getVerboseData($request);
+            try{
+                try {
+                    $request = $_GET;
+                    $data = [];
+                    $isVerifiedToken = $this->verifyWooCommerceToken($_SERVER);
+                    if ($isVerifiedToken === true) {
+                        if ($request['type'] === 'verbose') {
+                            $this->getVerboseData($request);
+                            http_response_code(200);
+                            exit;
+                        }
+    
+                        if ($request['type'] === 'order') {
+                            $data = $this->getOrderData($request);
+                        } else {
+                            $data = $this->getProductData($request);
+                        }
+                        $data = $this->array_filter_recursive($data);
                         http_response_code(200);
+                        echo json_encode($data);
                         exit;
                     }
-
-                    if ($request['type'] === 'order') {
-                        $data = $this->getOrderData($request);
-                    } else {
-                        $data = $this->getProductData($request);
-                    }
-                    $data = $this->array_filter_recursive($data);
-                    http_response_code(200);
-                    echo json_encode($data);
+                    header("HTTP/1.1 401 Unauthorized");
+                    echo json_encode(['message' => 'Invalid token.']);
                     exit;
+                } catch (\Exception $e) {
+                    if ($_GET['debug'] == true) {
+                        print_r($e);exit;
+                    }
                 }
-                header("HTTP/1.1 401 Unauthorized");
-                echo json_encode(['message' => 'Invalid token.']);
-                exit;
-            } catch (\Exception | \Error $e) {
+            }catch (\Error $e) {
                 if ($_GET['debug'] == true) {
                     print_r($e);exit;
                 }
             }
-
         }
 
         public function getVerboseData($data)
