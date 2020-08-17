@@ -431,7 +431,7 @@ juapp("order", "' . $order->get_id() . '", {
                     $variationId = $cartItem['variation_id'] > 0 ? $cartItem['variation_id'] : $cartItem['product_id'];
                     $product = $cartItem['data'];
                     $code .= "
-{ productid: '{$cartItem['product_id']}', variationid: '{$variationId}', sku:'{$product->get_sku()}', quantity: {$cartItem['quantity']}, price: {$cartItem['line_subtotal']}, {$attrs}name: '{$product->get_name()}'},";
+{ productid: '{$cartItem['product_id']}', variationid: '{$variationId}', sku:'{$product->get_sku()}', quantity: {$cartItem['quantity']}, price: {$product->get_price()}, {$attrs}name: '{$product->get_name()}'},";
                 }
                 $code = substr($code, 0, -1);
                 $code .= "])";
