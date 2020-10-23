@@ -1,9 +1,12 @@
 <?php
+/**
+ * @package Justuno
+ */
 /*
 Plugin Name: Justuno
 Plugin URI: https://www.justuno.com
 Description: Grow your social audience, email subscribers & sales!
-Version: 2.0
+Version: 2.1
 Author: Justuno
 Author URI: http://www.justuno.com
 License: GPLv2 or later
