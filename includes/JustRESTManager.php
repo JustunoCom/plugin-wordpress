@@ -35,8 +35,10 @@ if (!class_exists('JustRESTManager')) {
                             http_response_code(200);
                             exit;
                         }
-    
-                        if ($request['type'] === 'order') {
+                        
+                        if ($request['type'] === 'cart') { 
+                            $data = $this->getCartData();
+                        } else if ($request['type'] === 'order') {
                             $data = $this->getOrderData($request);
                         } else {
                             $data = $this->getProductData($request);
@@ -82,6 +84,16 @@ if (!class_exists('JustRESTManager')) {
         {
             if (class_exists('woocommerce')) {
                 return $this->JustWooService->getOrderData($data);
+            }
+            header("HTTP/1.1 401 Unauthorized");
+            echo json_encode(['message' => 'No Ecommerce plugin such as WooCommerce is active.']);
+            exit;
+        }
+        
+        public function getCartData($data)
+        {
+            if (class_exists('woocommerce')) {
+                return $this->JustWooService->getCartData($data);
             }
             header("HTTP/1.1 401 Unauthorized");
             echo json_encode(['message' => 'No Ecommerce plugin such as WooCommerce is active.']);

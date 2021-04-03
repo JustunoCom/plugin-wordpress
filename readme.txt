@@ -1,7 +1,7 @@
 === Justuno ===
 Tags: Conversion, marketing, lead generation, free pop up, free banners, wordpress popup, wordpress banners, wordpress lead generation, conversion optimization, coupons, coupon code, email marketing, email subscribers, mail chimp, constant contact, lead capture, increase sales , shopping cart abandonment, conversion rates, build email list, website optimization, website marketing, conversion rate optimization, increase conversion rate, increase conversions, increase engagement, customer engagement, promotion bar, promotions, promo codes, personalization, behavioral targeting, onsite retargeting, segmentation, geo-targeting, exit targeting, exit popup, exit coupons, exit intent, exit offers, shopping cart exit, exit overlay, custom popup design, popup offers, pop up, lightbox, promo bar, increase conversion, increase conversion rates, promote sales, promotion management, hellobar, sumo, sumome, privy, coupon pop, mail munch, optinmonster, coupon box, pop up window, email capture, email capture popup, list builder, aweber list builder, email list growth, better coupon box, popup, email popup, free popup, free pop up, jsutuno, jutsuno, justino, justnuo, just uno, justun, Justuno, pop ups by Justuno, conversion analytics, product promotions, holiday promotions, promotion popup, promotion box, sales promotion, collecting emails, email list, sales leads, pirvy, interactive spin, interactive email pop up, banner, shipping banner, banner slider, Pixelpop, free shipping banners, countdown banners, header bar, header, fixed header notification, zotabox, subscription pop up, wheel of fortune, fortune wheel, scroll box, mail chimp popup, constant contact popup, optimonk, optimonk, recast, Facebook likes popup, countdown timer, countdown, clock, clock countdown, countdown timer widget, sale countdown, countdown timer plugin, event countdown, website countdown, urgency countdown, mailchimp forms, e-mail, subscribers, push notifications, bouncex, bounce exchange, bounce x, wisepops, email overlay, exit-intent popup, exit-intent, pickerel, top rated, wordpress plugin, popup builder, popup maker, custom popup builder, pop-ups, slide-ins, email opt-ins, popup manager, newsletter popup, popup design, popup maker, icegram, woocommerce popup, woocommerce, Beeketing, Sendgrid, convertkit, mailjet, form builder, email marketing, marketing emails, hubspot, hubspot forms, hubspot popups, popupally, rejoiner, contact forms, campaign monitor, campaign monitor forms, campaign monitor popups, constant contact forms, constant contact popups, active campaign, active campaign forms, active campaign popups, Bronto, Bronto forms, Bronto popups, Salesforce, Salesforce forms, Salesforce popups, pardot, pardot forms, pardot popups, icontact, icontact forms, icontact popups, klaviyo, klaviyo forms, klaviyo popups, marketo, marketo forms, marketo popups, rejoiner, rejoiner forms, rejoiner popups, sailthru, sailthru forms, sailthru popups, sendgrid forms, sendgrid popups, sendpulse, sendpulse forms, sendpulse popups, smartrmail, smartrmail forms, smartrmail popups,fancybox,embed code,javascript,jquery,html forms
 Requires at least: 3.0
-Tested up to: 5.5
+Tested up to: 5.6
 Stable tag: trunk
 Contributors: justuno
 License: GPLv2 or later
@@ -78,3 +78,12 @@ Then activate the plugin through the 'Plugins' menu in WordPress. You will need 
 
 = 2.1 =
 * Fixes Small bugs
+
+= 2.2 =
+* Small bugs removed
+
+= 2.3 =
+* Added links to bridge Justuno and WordPress
+
+= 2.4 =
+* Ability to handle Ajax Carts

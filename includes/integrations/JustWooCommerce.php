@@ -1,4 +1,5 @@
 <?php
+
 namespace Integrations;
 
 if (!class_exists('JustWooCommerce')) {
@@ -64,7 +65,6 @@ if (!class_exists('JustWooCommerce')) {
                 if ($this->has_verbose('variations')) {
                     print_r($product->get_attributes());
                 }
-
             }
 
             $orders = wc_get_orders($args);
@@ -106,7 +106,6 @@ if (!class_exists('JustWooCommerce')) {
                 $products[] = $this->mapProductData($product, $thumbSize);
             }
             return $products;
-
         }
 
         public function mapProductData($product, $thumbSize)
@@ -356,6 +355,44 @@ if (!class_exists('JustWooCommerce')) {
             return $return;
         }
 
+        public function getCartData()
+        {
+            $cart = \WC()->cart;
+            $totals = $cart->get_totals();
+            $return = [
+                'total' => $totals['total'],
+                'subtotal' => $totals['subtotal'],
+                'tax' => $totals['total_tax'],
+                'shipping' => $totals['shipping_total'],
+                'currency' => "USD",
+                'items' => [],
+            ];
+
+            $cartItems = $cart->get_cart_contents();
+            if (count($cartItems) > 0) {
+                foreach ($cart->get_cart() as $key => $item) {
+                    $cartItem = $cart->get_cart_item($key);
+                    $attrs = '';
+                    if ($cartItem['variation_id'] > 0) {
+                        foreach ($cartItem['variation'] as $key => $value) {
+                            $attrs .= str_replace('attribute_', '', str_replace('pa_', '', $key)) . ": '{$value}', ";
+                        }
+                    }
+                    $variationId = $cartItem['variation_id'] > 0 ? $cartItem['variation_id'] : $cartItem['product_id'];
+                    $product = $cartItem['data'];
+                    $return['items'][] = [
+                        "productid"  => $cartItem['product_id'],
+                        "variationid" => $variationId,
+                        "sku" => $product->get_sku(),
+                        "quantity" => $cartItem['quantity'],
+                        "price" =>  $product->get_price(),
+                        "{$attrs}name" =>  $product->get_name()
+                    ];
+                }
+            }
+            return $return;
+        }
+
         public function getConversionTrackingCodes()
         {
             $code = '';
@@ -379,10 +416,11 @@ if (!class_exists('JustWooCommerce')) {
             }
 
             global $wp;
-            $order_id = absint($wp->query_vars['order-received']);
-            if ($order_id > 0) {
-                $order = wc_get_order($order_id);
-                $code .= '
+            if (isset($wp->query_vars['order-received'])) {
+                $order_id = absint($wp->query_vars['order-received']);
+                if ($order_id > 0) {
+                    $order = wc_get_order($order_id);
+                    $code .= '
 juapp("order", "' . $order->get_id() . '", {
 	total:' . floatval($order->get_total()) . ',
 	subtotal:' . floatval($order->get_subtotal()) . ',
@@ -390,12 +428,12 @@ juapp("order", "' . $order->get_id() . '", {
 	shipping:' . floatval($order->get_shipping_total()) . ',
 	currency: "' . $order->get_currency() . '"
 });';
-                foreach ($order->get_items() as $item) {
-                    $tmpCode = '';
-                    foreach ($item->get_formatted_meta_data() as $meta) {
-                        $tmpCode .= str_replace("pa_", "", $meta->key) . ':"' . $meta->value . '",';
-                    }
-                    $code .= 'juapp("orderItem", {
+                    foreach ($order->get_items() as $item) {
+                        $tmpCode = '';
+                        foreach ($item->get_formatted_meta_data() as $meta) {
+                            $tmpCode .= str_replace("pa_", "", $meta->key) . ':"' . $meta->value . '",';
+                        }
+                        $code .= 'juapp("orderItem", {
 	productid:' . $item->get_product_id() . ',
 	variationid:' . ($item->get_variation_id() > 0 ? $item->get_variation_id() : $item->get_product_id()) . ',
 	sku:"' . $item->get_product()->get_sku() . '",
@@ -404,6 +442,7 @@ juapp("order", "' . $order->get_id() . '", {
 	' . $tmpCode . '
 	price:' . floatval($item->get_total()) . '
 });';
+                    }
                 }
             }
 
