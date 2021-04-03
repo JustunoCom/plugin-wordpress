@@ -30,7 +30,7 @@ if (!function_exists('justuno_place_script')) {
                 function updateCartX() {
                     setTimeout(function() {
                         jQuery.ajax({
-                            url: "http://justuno.bitspro.com/?pagename=justuno-sync-job&type=cart&debug=true",
+                            url: "http://justuno.bitspro.com/?pagename=justuno-sync-job&type=cart",
                             type: "GET",
                             beforeSend: function(xhr){xhr.setRequestHeader(\'Authorization\', \'Bearer q3q6rvbvjueuzh4wtyzqr9\');},
                             success: function(data) { 
