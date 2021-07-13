@@ -372,47 +372,62 @@ if (!class_exists('JustWooCommerce')) {
             if (count($cartItems) > 0) {
                 foreach ($cart->get_cart() as $key => $item) {
                     $cartItem = $cart->get_cart_item($key);
-                    $attrs = '';
-                    if ($cartItem['variation_id'] > 0) {
-                        foreach ($cartItem['variation'] as $key => $value) {
-                            $attrs .= str_replace('attribute_', '', str_replace('pa_', '', $key)) . ": '{$value}', ";
-                        }
-                    }
                     $variationId = $cartItem['variation_id'] > 0 ? $cartItem['variation_id'] : $cartItem['product_id'];
                     $product = $cartItem['data'];
                     $return['items'][] = [
-                        "productid"  => $cartItem['product_id'],
-                        "variationid" => $variationId,
+                        "productID"  => $cartItem['product_id'],
+                        "name"  => $product->get_title(),
+                        "variationID" => $variationId,
                         "sku" => $product->get_sku(),
-                        "quantity" => $cartItem['quantity'],
-                        "price" =>  $product->get_price(),
-                        "{$attrs}name" =>  $product->get_name()
+                        "qty" => $cartItem['quantity'],
+                        "price" =>  floatval($product->get_price()),
+                        'key' => $key,
                     ];
                 }
             }
             return $return;
         }
 
+        public function getSingleProduct($id)
+        {
+            $item = wc_get_product($id);
+            return [
+                'productID' => (string) $item->get_id(),
+                'variationID' => (string) ($item->get_variation_id() > 0 ? $item->get_variation_id() : $item->get_id()),
+                'sku' => "",
+                'name' => $item->get_name(),
+                'price' => floatval($item->get_price()),
+                'currency' => get_woocommerce_currency(),
+            ];
+        }
+
         public function getConversionTrackingCodes()
         {
-            $code = '';
+            $code = 'window._jst_auth = "' . get_option('justuno_woocommerce_token') . '";';
             if (is_home()) {
                 $code .= 'juapp("local","pageType","home");';
+                $code .= 'window._jupagetype="home";';
             } else if (is_product_category()) {
                 $code .= 'juapp("local","pageType","category");';
+                $code .= 'window._jupagetype="category";';
             } else if (is_product()) {
                 global $post;
                 $code .= 'juapp("local","pageType","product");';
                 $code .= 'juapp("local","prodId","' . $post->ID . '");';
+                $code .= 'window._jupagetype="product";';
+                $code .= 'window._juprodId="' . $post->ID . '";';
             } else if (is_cart()) {
                 $code .= 'juapp("local","pageType","cart");';
+                $code .= 'window._jupagetype="cart";';
             } else if (is_checkout()) {
                 $code .= 'juapp("local","pageType","checkout");';
+                $code .= 'window._jupagetype="checkout";';
             }
 
             if (is_user_logged_in()) {
                 $current_user = wp_get_current_user();
                 $code .= 'juapp("local","custId","' . $current_user->user_email . '");';
+                $code .= 'window._jucustId="' . $current_user->user_email . '";';
             }
 
             global $wp;
@@ -420,29 +435,37 @@ if (!class_exists('JustWooCommerce')) {
                 $order_id = absint($wp->query_vars['order-received']);
                 if ($order_id > 0) {
                     $order = wc_get_order($order_id);
+                    $cartItems = '';
+                    foreach ($order->get_items() as $item) {
+                        $cartItems .= '{
+                            productID:' . $item->get_product_id() . ',
+                            variationID:' . ($item->get_variation_id() > 0 ? $item->get_variation_id() : $item->get_product_id()) . ',
+                            sku:"' . $item->get_product()->get_sku() . '",
+                            name:"' . $item->get_name() . '",
+                            qty:' . floatval($item->get_quantity()) . ',
+                            price:' . floatval($item->get_total()) . '
+                        },';
+                    }
+
+                    $coupons = '';
+                    if (method_exists($order, 'get_used_coupons')) {
+                        $coupons = $order->get_used_coupons();
+                    } else {
+                        $coupons = $order->get_coupon_codes();
+                    }
+
                     $code .= '
-juapp("order", "' . $order->get_id() . '", {
-	total:' . floatval($order->get_total()) . ',
-	subtotal:' . floatval($order->get_subtotal()) . ',
+juapp("order", {
+    orderID: "' . $order->get_id() . '", 
+	grandTotal:' . floatval($order->get_total()) . ',
+	subTotal:' . floatval($order->get_subtotal()) . ',
 	tax:' . floatval($order->get_total_tax()) . ',
 	shipping:' . floatval($order->get_shipping_total()) . ',
-	currency: "' . $order->get_currency() . '"
+    discount: ' . floatval($order->get_discount_total()) . ',
+	currency: "' . $order->get_currency() . '",
+    discountCodes: [' . json_encode($coupons) . '],
+    cartItems:[' . $cartItems . '],
 });';
-                    foreach ($order->get_items() as $item) {
-                        $tmpCode = '';
-                        foreach ($item->get_formatted_meta_data() as $meta) {
-                            $tmpCode .= str_replace("pa_", "", $meta->key) . ':"' . $meta->value . '",';
-                        }
-                        $code .= 'juapp("orderItem", {
-	productid:' . $item->get_product_id() . ',
-	variationid:' . ($item->get_variation_id() > 0 ? $item->get_variation_id() : $item->get_product_id()) . ',
-	sku:"' . $item->get_product()->get_sku() . '",
-	name:"' . $item->get_name() . '",
-	quantity:' . floatval($item->get_quantity()) . ',
-	' . $tmpCode . '
-	price:' . floatval($item->get_total()) . '
-});';
-                    }
                 }
             }
 
@@ -453,7 +476,7 @@ juapp("order", "' . $order->get_id() . '", {
 	subtotal:' . $totals['subtotal'] . ',
 	tax:' . $totals['total_tax'] . ',
 	shipping:' . $totals['shipping_total'] . ',
-	currency:"USD",
+	currency:"' . get_woocommerce_currency() . '",
 	}
 );';
             $cartItems = $cart->get_cart_contents();
@@ -469,8 +492,11 @@ juapp("order", "' . $order->get_id() . '", {
                     }
                     $variationId = $cartItem['variation_id'] > 0 ? $cartItem['variation_id'] : $cartItem['product_id'];
                     $product = $cartItem['data'];
+
+                    $p = floatval($product->get_price());
+
                     $code .= "
-{ productid: '{$cartItem['product_id']}', variationid: '{$variationId}', sku:'{$product->get_sku()}', quantity: {$cartItem['quantity']}, price: {$product->get_price()}, {$attrs}name: '{$product->get_name()}'},";
+{ productID: '{$cartItem['product_id']}', variationID: '{$variationId}', sku:'{$product->get_sku()}', qty: {$cartItem['quantity']}, price: {$p}},";
                 }
                 $code = substr($code, 0, -1);
                 $code .= "])";

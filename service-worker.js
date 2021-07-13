@@ -1,4 +1,4 @@
-self.addEventListener("push", function(event) {
+self.addEventListener("push", function (event) {
   console.log("Push message!", event.data.text());
   const payload = JSON.parse(event.data.text());
 
@@ -9,13 +9,13 @@ self.addEventListener("push", function(event) {
       icon: payload.icon,
       image: payload.image,
       data: {
-        link: payload.link
-      }
+        link: payload.link,
+      },
     })
   );
 });
 
-self.addEventListener("notificationclick", function(event) {
+self.addEventListener("notificationclick", function (event) {
   console.log("Notification click: tag", event.notification.tag);
   event.notification.close();
   if (event.notification.data.link)

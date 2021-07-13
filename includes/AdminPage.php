@@ -11,28 +11,28 @@ if (!function_exists('justuno_plugin_page')) {
     function justuno_plugin_page()
     {
         $link = 'http://www.justuno.com/getstarted.html';
-        ?>
+?>
         <div class="wrap">
-            <?php screen_icon('plugins');?> <h2>Justuno</h2>
+            <?php screen_icon('plugins'); ?> <h2>Justuno</h2>
             <form action="options.php" method="post">
-                <?php settings_fields('justuno_base_settings');?>
-                <?php do_settings_sections('justuno_base_settings');?>
+                <?php settings_fields('justuno_base_settings'); ?>
+                <?php do_settings_sections('justuno_base_settings'); ?>
                 <input name="Submit" class="button button-primary" type="submit" value="Save Changes" />
-				<?php if (class_exists('WooCommerce')): ?>
-                <input name="button" class="button button-secondary" type="button" onclick="justuno_generate_random_token()" value="Regenerate Token" />
-				<?php endif; ?>
+                <?php if (class_exists('WooCommerce')) : ?>
+                    <input name="button" class="button button-secondary" type="button" onclick="justuno_generate_random_token()" value="Regenerate Token" />
+                <?php endif; ?>
             </form>
         </div>
-        <?php
+<?php
     }
 }
 
 add_filter('admin_enqueue_scripts', 'justuno_admin_js_files');
 if (!function_exists('justuno_admin_js_files')) {
-	function justuno_admin_js_files($files)
-	{
-    	wp_enqueue_script('my_custom_script', plugins_url('/js/admin.js', __FILE__));
-	}
+    function justuno_admin_js_files($files)
+    {
+        wp_enqueue_script('my_custom_script', plugins_url('/js/admin.js', __FILE__));
+    }
 }
 
 add_action("admin_init", "justuno_display_options");
@@ -53,7 +53,7 @@ if (!function_exists('justuno_display_options')) {
             'trim'
         );
 
-		add_settings_field(
+        add_settings_field(
             'justuno_api_key',
             'Justuno Account Number',
             'justuno_api_key_field',
@@ -77,7 +77,7 @@ if (!function_exists('justuno_display_options')) {
                 'trim'
             );
 
-			add_settings_field(
+            add_settings_field(
                 'justuno_woocommerce_token',
                 'WooCommerce Token',
                 'justuno_woocommerce_token_field',
@@ -86,7 +86,6 @@ if (!function_exists('justuno_display_options')) {
                 array('label_for' => 'justuno_woocommerce_token')
             );
         }
-
     }
 
     function justuno_api_key_description()

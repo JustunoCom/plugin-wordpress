@@ -7,7 +7,7 @@
 Plugin Name: Justuno
 Plugin URI: https://www.justuno.com
 Description: Grow your social audience, email subscribers & sales!
-Version: 2.4
+Version: 2.5
 Author: Justuno
 Author URI: http://www.justuno.com
 License: GPLv2 or later
