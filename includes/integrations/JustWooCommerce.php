@@ -245,7 +245,7 @@ if (!class_exists('JustWooCommerce')) {
                         "Option2" => isset($options[1]) ? $options[1] : null,
                         "Option3" => isset($options[2]) ? $options[2] : null,
                         "SalePrice" => isset($variation["display_price"]) ? $variation["display_price"] : null,
-                        "InventoryQuantity" => $isEnabled && $isVariationEnabled ? (isset($variation["max_qty"]) && $variation["max_qty"] != null ? $variation["max_qty"] : 9999) : -9999,
+                        "InventoryQuantity" => $isEnabled && $isVariationEnabled ? (isset($variation["max_qty"]) && $variation["max_qty"] != null ? round($variation["max_qty"]) : 9999) : -9999,
                     ];
                 }
             } else {
@@ -267,7 +267,7 @@ if (!class_exists('JustWooCommerce')) {
                     "Option1" => null,
                     "Option2" => null,
                     "Option3" => null,
-                    "InventoryQuantity" => $isEnabled ? ($product->get_max_purchase_quantity() === -1 ? 9999 : $product->get_max_purchase_quantity()) : -9999,
+                    "InventoryQuantity" => $isEnabled ? ($product->get_max_purchase_quantity() === -1 ? 9999 : round($product->get_max_purchase_quantity())) : -9999,
                 ];
             }
             return $return;
