@@ -87,3 +87,6 @@ Then activate the plugin through the 'Plugins' menu in WordPress. You will need 
 
 = 2.4 =
 * Ability to handle Ajax Carts
+
+= 2.5 =
+* Ingestion bugs fixed
