@@ -245,7 +245,7 @@ if (!class_exists('JustWooCommerce')) {
                         "Option2" => isset($options[1]) ? $options[1] : null,
                         "Option3" => isset($options[2]) ? $options[2] : null,
                         "SalePrice" => isset($variation["display_price"]) ? $variation["display_price"] : null,
-                        "InventoryQuantity" => $isEnabled && $isVariationEnabled ? (isset($variation["max_qty"]) && $variation["max_qty"] != null ? $variation["max_qty"] : 9999) : -9999,
+                        "InventoryQuantity" => $isEnabled && $isVariationEnabled ? (isset($variation["max_qty"]) && $variation["max_qty"] != null ? round($variation["max_qty"]) : 9999) : -9999,
                     ];
                 }
             } else {
@@ -267,7 +267,7 @@ if (!class_exists('JustWooCommerce')) {
                     "Option1" => null,
                     "Option2" => null,
                     "Option3" => null,
-                    "InventoryQuantity" => $isEnabled ? ($product->get_max_purchase_quantity() === -1 ? 9999 : $product->get_max_purchase_quantity()) : -9999,
+                    "InventoryQuantity" => $isEnabled ? ($product->get_max_purchase_quantity() === -1 ? 9999 : round($product->get_max_purchase_quantity())) : -9999,
                 ];
             }
             return $return;
@@ -388,22 +388,9 @@ if (!class_exists('JustWooCommerce')) {
             return $return;
         }
 
-        public function getSingleProduct($id)
-        {
-            $item = wc_get_product($id);
-            return [
-                'productID' => (string) $item->get_id(),
-                'variationID' => (string) ($item->get_variation_id() > 0 ? $item->get_variation_id() : $item->get_id()),
-                'sku' => "",
-                'name' => $item->get_name(),
-                'price' => floatval($item->get_price()),
-                'currency' => get_woocommerce_currency(),
-            ];
-        }
-
         public function getConversionTrackingCodes()
         {
-            $code = 'window._jst_auth = "' . get_option('justuno_woocommerce_token') . '";';
+            $code = '';
             if (is_home()) {
                 $code .= 'juapp("local","pageType","home");';
                 $code .= 'window._jupagetype="home";';
@@ -430,45 +417,6 @@ if (!class_exists('JustWooCommerce')) {
                 $code .= 'window._jucustId="' . $current_user->user_email . '";';
             }
 
-            global $wp;
-            if (isset($wp->query_vars['order-received'])) {
-                $order_id = absint($wp->query_vars['order-received']);
-                if ($order_id > 0) {
-                    $order = wc_get_order($order_id);
-                    $cartItems = '';
-                    foreach ($order->get_items() as $item) {
-                        $cartItems .= '{
-                            productID:' . $item->get_product_id() . ',
-                            variationID:' . ($item->get_variation_id() > 0 ? $item->get_variation_id() : $item->get_product_id()) . ',
-                            sku:"' . $item->get_product()->get_sku() . '",
-                            name:"' . $item->get_name() . '",
-                            qty:' . floatval($item->get_quantity()) . ',
-                            price:' . floatval($item->get_total()) . '
-                        },';
-                    }
-
-                    $coupons = '';
-                    if (method_exists($order, 'get_used_coupons')) {
-                        $coupons = $order->get_used_coupons();
-                    } else {
-                        $coupons = $order->get_coupon_codes();
-                    }
-
-                    $code .= '
-juapp("order", {
-    orderID: "' . $order->get_id() . '", 
-	grandTotal:' . floatval($order->get_total()) . ',
-	subTotal:' . floatval($order->get_subtotal()) . ',
-	tax:' . floatval($order->get_total_tax()) . ',
-	shipping:' . floatval($order->get_shipping_total()) . ',
-    discount: ' . floatval($order->get_discount_total()) . ',
-	currency: "' . $order->get_currency() . '",
-    discountCodes: [' . json_encode($coupons) . '],
-    cartItems:[' . $cartItems . '],
-});';
-                }
-            }
-
             $cart = \WC()->cart;
             $totals = $cart->get_totals();
             $code .= 'juapp("cart", {
@@ -492,9 +440,7 @@ juapp("order", {
                     }
                     $variationId = $cartItem['variation_id'] > 0 ? $cartItem['variation_id'] : $cartItem['product_id'];
                     $product = $cartItem['data'];
-
                     $p = floatval($product->get_price());
-
                     $code .= "
 { productID: '{$cartItem['product_id']}', variationID: '{$variationId}', sku:'{$product->get_sku()}', qty: {$cartItem['quantity']}, price: {$p}},";
                 }
