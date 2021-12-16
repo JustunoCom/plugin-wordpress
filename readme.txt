@@ -90,3 +90,6 @@ Then activate the plugin through the 'Plugins' menu in WordPress. You will need 
 
 = 2.5 =
 * Ingestion bugs fixed
+
+= 2.6 =
+* Small Fixes for Particular Account

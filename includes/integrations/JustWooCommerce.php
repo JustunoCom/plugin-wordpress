@@ -415,37 +415,6 @@ if (!class_exists('JustWooCommerce')) {
                 $code .= 'juapp("local","custId","' . $current_user->user_email . '");';
             }
 
-            global $wp;
-            if (isset($wp->query_vars['order-received'])) {
-                $order_id = absint($wp->query_vars['order-received']);
-                if ($order_id > 0) {
-                    $order = wc_get_order($order_id);
-                    $code .= '
-juapp("order", "' . $order->get_id() . '", {
-	total:' . floatval($order->get_total()) . ',
-	subtotal:' . floatval($order->get_subtotal()) . ',
-	tax:' . floatval($order->get_total_tax()) . ',
-	shipping:' . floatval($order->get_shipping_total()) . ',
-	currency: "' . $order->get_currency() . '"
-});';
-                    foreach ($order->get_items() as $item) {
-                        $tmpCode = '';
-                        foreach ($item->get_formatted_meta_data() as $meta) {
-                            $tmpCode .= str_replace("pa_", "", $meta->key) . ':"' . $meta->value . '",';
-                        }
-                        $code .= 'juapp("orderItem", {
-	productid:' . $item->get_product_id() . ',
-	variationid:' . ($item->get_variation_id() > 0 ? $item->get_variation_id() : $item->get_product_id()) . ',
-	sku:"' . $item->get_product()->get_sku() . '",
-	name:"' . $item->get_name() . '",
-	quantity:' . floatval($item->get_quantity()) . ',
-	' . $tmpCode . '
-	price:' . floatval($item->get_total()) . '
-});';
-                    }
-                }
-            }
-
             $cart = \WC()->cart;
             $totals = $cart->get_totals();
             $code .= 'juapp("cart", {
