@@ -90,7 +90,7 @@ if (!function_exists('justuno_display_options')) {
 
     function justuno_api_key_description()
     {
-        echo '<p>You need to have an existing account at justuno.com.<br /><a target="_blank" href="https://www.justuno.com/get-started/">Click here</a> to create a Free Trial account if needed.</p><p style="margin-bottom: 25px;">For more help with this screen, <a target="_blank" href="https://support.justuno.com/install-justuno-on-woocommerce">click here</a><br /></p>';
+        echo '<p>You need to have an existing account at justuno.com.<br /><a target="_blank" href="https://portal.justuno.com/">Click here</a> to create a Free Trial account if needed.</p><p style="margin-bottom: 25px;">For more help with this screen, <a target="_blank" href="https://support.justuno.com/install-justuno-on-woocommerce">click here</a><br /></p>';
     }
 
     function justuno_api_key_field($args)
@@ -98,7 +98,7 @@ if (!function_exists('justuno_display_options')) {
         $data = esc_attr(get_option('justuno_api_key', ''));
 
         printf(
-            '<input type="text" name="justuno_api_key" value="%1$s" class="all-options" id="%2$s" /><a style="margin-left: 20px" class="button button-primary" target="_blank" href="https://my.justuno.com/admin/v2/account/embed">Find My Justuno Account Number</a>',
+            '<input type="text" name="justuno_api_key" value="%1$s" class="all-options" id="%2$s" /><a style="margin-left: 20px" class="button button-primary" target="_blank" href="https://portal.justuno.com/app/account/embed-code">Find My Justuno Account Number</a>',
             $data,
             $args['label_for']
         );
