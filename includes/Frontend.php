@@ -31,3 +31,43 @@ if (!function_exists('justuno_place_script')) {
         }
     }
 }
+
+// define the woocommerce_thankyou callback 
+function action_woocommerce_thankyou($order_get_id)
+{
+    $code = '';
+    $order_id = absint($order_get_id);
+    if ($order_id > 0) {
+        $order = wc_get_order($order_id);
+        $code .= '
+juapp("order", {
+    orderID: "' . $order->get_id() . '",
+    grandTotal:' . floatval($order->get_total()) . ',
+    subTotal:' . floatval($order->get_subtotal()) . ',
+    tax:' . floatval($order->get_total_tax()) . ',
+    shipping:' . floatval($order->get_shipping_total()) . ',
+    discount: ' . floatval($order->get_discount_total()) . ',
+    currency: "' . $order->get_currency() . '",
+    discountCodes: [' . json_encode($coupons) . '],
+});';
+        foreach ($order->get_items() as $item) {
+            $tmpCode = '';
+            foreach ($item->get_formatted_meta_data() as $meta) {
+                $tmpCode .= str_replace("pa_", "", $meta->key) . ':"' . $meta->value . '",';
+            }
+            $code .= 'juapp("orderItem", {
+productID:' . $item->get_product_id() . ',
+variationID:' . ($item->get_variation_id() > 0 ? $item->get_variation_id() : $item->get_product_id()) . ',
+sku:"' . $item->get_product()->get_sku() . '",
+name:"' . $item->get_name() . '",
+quantity:' . floatval($item->get_quantity()) . ',
+' . $tmpCode . '
+price:' . floatval($item->get_total()) . '
+});';
+        }
+    }
+    echo '<script type="text/javascript">' . $code . '</script>';
+};
+
+// add the action 
+add_action('woocommerce_thankyou', 'action_woocommerce_thankyou', 10, 1);
