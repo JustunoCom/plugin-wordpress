@@ -375,7 +375,12 @@ if (!class_exists('JustWooCommerce')) {
                     $attrs = '';
                     if ($cartItem['variation_id'] > 0) {
                         foreach ($cartItem['variation'] as $key => $value) {
-                            $attrs .= str_replace('attribute_', '', str_replace('pa_', '', $key)) . ": '{$value}', ";
+                            if (strpos(strtolower($key), "color") !== FALSE) {
+                                $attrs .= "color: '`{$value}`, ";
+                            }
+                            if (strpos(strtolower($key), "size") !== FALSE) {
+                                $attrs .= "size: `{$value}`, ";
+                            }
                         }
                     }
                     $variationId = $cartItem['variation_id'] > 0 ? $cartItem['variation_id'] : $cartItem['product_id'];
@@ -433,13 +438,18 @@ if (!class_exists('JustWooCommerce')) {
                     $attrs = '';
                     if ($cartItem['variation_id'] > 0) {
                         foreach ($cartItem['variation'] as $key => $value) {
-                            $attrs .= str_replace('attribute_', '', str_replace('pa_', '', $key)) . ": '{$value}', ";
+                            if (strpos(strtolower($key), "color") !== FALSE) {
+                                $attrs .= "color: `{$value}`, ";
+                            }
+                            if (strpos(strtolower($key), "size") !== FALSE) {
+                                $attrs .= "size: `{$value}`, ";
+                            }
                         }
                     }
                     $variationId = $cartItem['variation_id'] > 0 ? $cartItem['variation_id'] : $cartItem['product_id'];
                     $product = $cartItem['data'];
                     $code .= "
-{ productid: '{$cartItem['product_id']}', variationid: '{$variationId}', sku:'{$product->get_sku()}', quantity: {$cartItem['quantity']}, price: {$product->get_price()}, {$attrs}name: '{$product->get_name()}'},";
+{ productid: '{$cartItem['product_id']}', variationid: '{$variationId}', sku:`{$product->get_sku()}`, quantity: {$cartItem['quantity']}, price: {$product->get_price()}, {$attrs}name: `{$product->get_name()}`},";
                 }
                 $code = substr($code, 0, -1);
                 $code .= "])";

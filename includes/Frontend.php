@@ -77,14 +77,20 @@ currency: "' . $order->get_currency() . '"
 });';
         foreach ($order->get_items() as $item) {
             $tmpCode = '';
-            foreach ($item->get_formatted_meta_data() as $meta) {
-                $tmpCode .= str_replace("pa_", "", $meta->key) . ':"' . $meta->value . '",';
+            foreach ($item->get_meta_data() as $meta) {
+                if (strpos(strtolower($meta->key), "color") !== FALSE) {
+                    $tmpCode .= 'color:`' . $meta->value . '`,';
+                    $tmpCode .= "\n";
+                }
+                if (strpos(strtolower($meta->key), "size") !== FALSE) {
+                    $tmpCode .= 'size:`' . $meta->value . '`,';
+                }
             }
             $code .= 'juapp("orderItem", {
 productid:' . $item->get_product_id() . ',
 variationid:' . ($item->get_variation_id() > 0 ? $item->get_variation_id() : $item->get_product_id()) . ',
-sku:"' . $item->get_product()->get_sku() . '",
-name:"' . $item->get_name() . '",
+sku:`' . $item->get_product()->get_sku() . '`,
+name:`' . $item->get_name() . '`,
 quantity:' . floatval($item->get_quantity()) . ',
 ' . $tmpCode . '
 price:' . floatval($item->get_total()) . '
