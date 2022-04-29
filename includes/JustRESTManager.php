@@ -1,4 +1,5 @@
 <?php
+
 namespace Integrations;
 
 require_once dirname(__FILE__) . '/integrations/JustWooCommerce.php';
@@ -24,7 +25,7 @@ if (!class_exists('JustRESTManager')) {
 
         public function entertainCall()
         {
-            try{
+            try {
                 try {
                     $request = $_GET;
                     $data = [];
@@ -35,8 +36,8 @@ if (!class_exists('JustRESTManager')) {
                             http_response_code(200);
                             exit;
                         }
-                        
-                        if ($request['type'] === 'cart') { 
+
+                        if ($request['type'] === 'cart') {
                             $data = $this->getCartData();
                         } else if ($request['type'] === 'order') {
                             $data = $this->getOrderData($request);
@@ -53,12 +54,14 @@ if (!class_exists('JustRESTManager')) {
                     exit;
                 } catch (\Exception $e) {
                     if ($_GET['debug'] == true) {
-                        print_r($e);exit;
+                        print_r($e);
+                        exit;
                     }
                 }
-            }catch (\Error $e) {
+            } catch (\Error $e) {
                 if ($_GET['debug'] == true) {
-                    print_r($e);exit;
+                    print_r($e);
+                    exit;
                 }
             }
         }
@@ -89,11 +92,11 @@ if (!class_exists('JustRESTManager')) {
             echo json_encode(['message' => 'No Ecommerce plugin such as WooCommerce is active.']);
             exit;
         }
-        
-        public function getCartData($data)
+
+        public function getCartData()
         {
             if (class_exists('woocommerce')) {
-                return $this->JustWooService->getCartData($data);
+                return $this->JustWooService->getCartData();
             }
             header("HTTP/1.1 401 Unauthorized");
             echo json_encode(['message' => 'No Ecommerce plugin such as WooCommerce is active.']);
