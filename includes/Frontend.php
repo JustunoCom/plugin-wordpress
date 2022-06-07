@@ -41,7 +41,7 @@ if (!function_exists('justuno_script_for_subdomain'))
         $objRESTManager = new Integrations\JustRESTManager();
         $code = $objRESTManager->getConversionTrackingCodes();
         $data_field_result =get_option('justuno_sub_domain');
-        if($data_field_result)
+        if($data_field_result != "")
         {
              $baseURL = get_option('justuno_sub_domain');
         }
