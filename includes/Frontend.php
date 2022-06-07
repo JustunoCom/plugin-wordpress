@@ -32,6 +32,7 @@ if (!function_exists('justuno_place_script')) {
     }
 }
 // ------------------------------------------------
+add_action('wp_head', 'justuno_script_for_subdomain');
 if (!function_exists('justuno_script_for_subdomain')) 
 {
     function justuno_script_for_subdomain()
