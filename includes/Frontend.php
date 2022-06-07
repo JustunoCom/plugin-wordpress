@@ -40,10 +40,10 @@ if (!function_exists('justuno_script_for_subdomain'))
         $apiURL. = "https://api.justuno.com";
         $objRESTManager = new Integrations\JustRESTManager();
         $code = $objRESTManager->getConversionTrackingCodes();
-        $data_field_result =get_option('justuno_sub_domain','');
+        $data_field_result =get_option('justuno_sub_domain');
         if($data_field_result)
         {
-             $baseURL = get_option('justuno_sub_domain','');
+             $baseURL = get_option('justuno_sub_domain');
 
         }
          global $post;
