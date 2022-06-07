@@ -51,17 +51,6 @@ if (!function_exists('justuno_script_for_subdomain'))
 }
 
 // ------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
 // define the woocommerce_thankyou callback 
 function action_woocommerce_thankyou($order_get_id)
 {
