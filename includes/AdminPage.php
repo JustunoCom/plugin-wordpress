@@ -143,7 +143,7 @@ if (!function_exists('justuno_display_options')) {
         $result_data = esc_attr(get_option('justuno_sub_domain', ''));
 
         printf(
-            '<input type="text" name="justuno_sub_domain" value="%3$s" class="all-options" id="%4$s" /><a style="margin-left: 20px" class="button button-primary">Add Subdomain URL</a>',
+            '<input type="text" name="justuno_sub_domain" value="%1$s" class="all-options" id="%2$s" /><a style="margin-left: 20px" class="button button-primary">Add Subdomain URL</a>',
             $result_data,
             $args['label_for_sub_domain']
         );
