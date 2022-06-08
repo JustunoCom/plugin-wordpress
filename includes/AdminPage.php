@@ -62,33 +62,7 @@ if (!function_exists('justuno_display_options')) {
             array('label_for' => 'justuno_api_key')
         );
 
-        // -----------------------------------------
-
-        add_settings_section(
-            'justuno_sub_domain',
-            'Subdomain URL',
-            'justuno_sub_domain_description',
-            'justuno_base_settings'
-        );
-
-        // Register a callback
-        register_setting(
-            'justuno_base_settings',
-            'justuno_sub_domain',
-            'trim'
-        );
-
-        add_settings_field(
-            'justuno_sub_domain',
-            'Justuno Subdomain URL',
-            'justuno_sub_domain_field',
-            'justuno_base_settings',
-            'justuno_sub_domain',
-            array('label_for_sub_domain' => 'justuno_sub_domain')
-        );
-
-      // -----------------------------------------
-        if (class_exists('WooCommerce')) {
+              if (class_exists('WooCommerce')) {
             add_settings_section(
                 'justuno_woocommerce_token',
                 'WooCommerce Token',
@@ -130,25 +104,7 @@ if (!function_exists('justuno_display_options')) {
         );
     }
     
-    // ------------------------------------------------
-   function justuno_sub_domain_description()
-    {
-        echo '<p>A subdomain will act as proxy to our server that would server all the files and API endpoints to your website<br /></p>';
-    }
-
-
-
-   function justuno_sub_domain_field($args)
-    {
-        $result_data = esc_attr(get_option('justuno_sub_domain', ''));
-
-        printf(
-            '<input type="text" name="justuno_sub_domain" value="%1$s" class="all-options" id="%2$s" />',
-            $result_data,
-            $args['label_for_sub_domain']
-        );
-    }
-    // ------------------------------------------------
+  
 
     function justuno_woocommerce_token_description()
     {
