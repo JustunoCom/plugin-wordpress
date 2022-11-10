@@ -93,3 +93,9 @@ Then activate the plugin through the 'Plugins' menu in WordPress. You will need 
 
 = 2.6 =
 * Small Fixes for Particular Account
+
+= 2.7 =
+* CartTracking Updated
+
+= 2.8 =
+* Removed false Call
