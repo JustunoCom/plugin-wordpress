@@ -357,43 +357,54 @@ if (!class_exists('JustWooCommerce')) {
 
         public function getCartData()
         {
-            $cart = \WC()->cart;
-            $totals = $cart->get_totals();
-            $return = [
-                'total' => $totals['total'],
-                'subtotal' => $totals['subtotal'],
-                'tax' => $totals['total_tax'],
-                'shipping' => $totals['shipping_total'],
-                'currency' => "USD",
-                'items' => [],
-            ];
+            if (!is_null($cart)) {
+                $cart = \WC()->cart;
+                $totals = $cart->get_totals();
+                $return = [
+                    'total' => $totals['total'],
+                    'subtotal' => $totals['subtotal'],
+                    'tax' => $totals['total_tax'],
+                    'shipping' => $totals['shipping_total'],
+                    'currency' => "USD",
+                    'items' => [],
+                ];
 
-            $cartItems = $cart->get_cart_contents();
-            if (count($cartItems) > 0) {
-                foreach ($cart->get_cart() as $key => $item) {
-                    $cartItem = $cart->get_cart_item($key);
-                    $attrs = '';
-                    if ($cartItem['variation_id'] > 0) {
-                        foreach ($cartItem['variation'] as $key => $value) {
-                            if (strpos(strtolower($key), "color") !== FALSE) {
-                                $attrs .= "color: '`{$value}`, ";
-                            }
-                            if (strpos(strtolower($key), "size") !== FALSE) {
-                                $attrs .= "size: `{$value}`, ";
+                $cartItems = $cart->get_cart_contents();
+                if (count($cartItems) > 0) {
+                    foreach ($cart->get_cart() as $key => $item) {
+                        $cartItem = $cart->get_cart_item($key);
+                        $attrs = '';
+                        if ($cartItem['variation_id'] > 0) {
+                            foreach ($cartItem['variation'] as $key => $value) {
+                                if (strpos(strtolower($key), "color") !== FALSE) {
+                                    $attrs .= "color: '`{$value}`, ";
+                                }
+                                if (strpos(strtolower($key), "size") !== FALSE) {
+                                    $attrs .= "size: `{$value}`, ";
+                                }
                             }
                         }
+                        $variationId = $cartItem['variation_id'] > 0 ? $cartItem['variation_id'] : $cartItem['product_id'];
+                        $product = $cartItem['data'];
+                        $return['items'][] = [
+                            "productid"  => $cartItem['product_id'],
+                            "variationid" => $variationId,
+                            "sku" => $product->get_sku(),
+                            "quantity" => $cartItem['quantity'],
+                            "price" =>  $product->get_price(),
+                            "{$attrs}name" =>  $product->get_name()
+                        ];
                     }
-                    $variationId = $cartItem['variation_id'] > 0 ? $cartItem['variation_id'] : $cartItem['product_id'];
-                    $product = $cartItem['data'];
-                    $return['items'][] = [
-                        "productid"  => $cartItem['product_id'],
-                        "variationid" => $variationId,
-                        "sku" => $product->get_sku(),
-                        "quantity" => $cartItem['quantity'],
-                        "price" =>  $product->get_price(),
-                        "{$attrs}name" =>  $product->get_name()
-                    ];
                 }
+            } else {
+                $return = [
+                    'total' => 0,
+                    'subtotal' => 0,
+                    'tax' => 0,
+                    'shipping' => 0,
+                    'currency' => "USD",
+                    'items' => [],
+                ];
             }
             return $return;
         }
@@ -421,8 +432,9 @@ if (!class_exists('JustWooCommerce')) {
             }
 
             $cart = \WC()->cart;
-            $totals = $cart->get_totals();
-            $code .= 'juapp("cart", {
+            if (!is_null($cart)) {
+                $totals = $cart->get_totals();
+                $code .= 'juapp("cart", {
 	total:' . $totals['total'] . ',
 	subtotal:' . $totals['subtotal'] . ',
 	tax:' . $totals['total_tax'] . ',
@@ -430,29 +442,30 @@ if (!class_exists('JustWooCommerce')) {
 	currency:"USD",
 	}
 );';
-            $cartItems = $cart->get_cart_contents();
-            if (count($cartItems) > 0) {
-                $code .= "juapp('cartItems', [";
-                foreach ($cart->get_cart() as $key => $item) {
-                    $cartItem = $cart->get_cart_item($key);
-                    $attrs = '';
-                    if ($cartItem['variation_id'] > 0) {
-                        foreach ($cartItem['variation'] as $key => $value) {
-                            if (strpos(strtolower($key), "color") !== FALSE) {
-                                $attrs .= "color: `{$value}`, ";
-                            }
-                            if (strpos(strtolower($key), "size") !== FALSE) {
-                                $attrs .= "size: `{$value}`, ";
+                $cartItems = $cart->get_cart_contents();
+                if (count($cartItems) > 0) {
+                    $code .= "juapp('cartItems', [";
+                    foreach ($cart->get_cart() as $key => $item) {
+                        $cartItem = $cart->get_cart_item($key);
+                        $attrs = '';
+                        if ($cartItem['variation_id'] > 0) {
+                            foreach ($cartItem['variation'] as $key => $value) {
+                                if (strpos(strtolower($key), "color") !== FALSE) {
+                                    $attrs .= "color: `{$value}`, ";
+                                }
+                                if (strpos(strtolower($key), "size") !== FALSE) {
+                                    $attrs .= "size: `{$value}`, ";
+                                }
                             }
                         }
-                    }
-                    $variationId = $cartItem['variation_id'] > 0 ? $cartItem['variation_id'] : $cartItem['product_id'];
-                    $product = $cartItem['data'];
-                    $code .= "
+                        $variationId = $cartItem['variation_id'] > 0 ? $cartItem['variation_id'] : $cartItem['product_id'];
+                        $product = $cartItem['data'];
+                        $code .= "
 { productid: '{$cartItem['product_id']}', variationid: '{$variationId}', sku:`{$product->get_sku()}`, quantity: {$cartItem['quantity']}, price: {$product->get_price()}, {$attrs}name: `{$product->get_name()}`},";
+                    }
+                    $code = substr($code, 0, -1);
+                    $code .= "])";
                 }
-                $code = substr($code, 0, -1);
-                $code .= "])";
             }
             return $code;
         }
