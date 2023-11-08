@@ -24,20 +24,28 @@ if (!class_exists('JustRESTManager')) {
 
         public function entertainCall()
         {
-            try{
+            try {
                 try {
                     $request = $_GET;
                     $data = [];
                     $isVerifiedToken = $this->verifyWooCommerceToken($_SERVER);
-                    if ($isVerifiedToken === true) {
+                    if ($isVerifiedToken === true || $request['type'] === 'cart') {
                         if ($request['type'] === 'verbose') {
                             $this->getVerboseData($request);
                             http_response_code(200);
                             exit;
                         }
-                        
-                        if ($request['type'] === 'cart') { 
-                            $data = $this->getCartData();
+                        if ($request['type'] === 'discount') {
+                            $return = $this->applyDiscountData();
+                            if ($return === false) {
+                                header("HTTP/1.1 401 Unauthorized");
+                                echo json_encode(['message' => 'Invalid Code.']);
+                                exit;
+                            } else {
+                                $data = ['message' => 'Cuopon Applied successfully.'];
+                            }
+                        } else if ($request['type'] === 'cart') {
+                            $data = $this->JustWooService->getCartData($data);
                         } else if ($request['type'] === 'order') {
                             $data = $this->getOrderData($request);
                         } else {
@@ -53,12 +61,14 @@ if (!class_exists('JustRESTManager')) {
                     exit;
                 } catch (\Exception $e) {
                     if ($_GET['debug'] == true) {
-                        print_r($e);exit;
+                        print_r($e);
+                        exit;
                     }
                 }
-            }catch (\Error $e) {
+            } catch (\Error $e) {
                 if ($_GET['debug'] == true) {
-                    print_r($e);exit;
+                    print_r($e);
+                    exit;
                 }
             }
         }
@@ -89,9 +99,21 @@ if (!class_exists('JustRESTManager')) {
             echo json_encode(['message' => 'No Ecommerce plugin such as WooCommerce is active.']);
             exit;
         }
-        
+
+        public function applyDiscountData()
+        {
+            if (class_exists('woocommerce')) {
+                return $this->JustWooService->applyDiscountData($_GET);
+            }
+            header("HTTP/1.1 401 Unauthorized");
+            echo json_encode(['message' => 'No Ecommerce plugin such as WooCommerce is active.']);
+            exit;
+        }
+
         public function getCartData($data)
         {
+            print_r('sdf');
+            exit;
             if (class_exists('woocommerce')) {
                 return $this->JustWooService->getCartData($data);
             }
